@@ -1,0 +1,19 @@
+{
+		"try_template" 	: {
+			"input_text" : {
+				"name"		: "First Name",
+				"bonus"		: "Bonus",
+				"price"		: "Price",
+				"website"	: "Website"
+			},
+			
+			"uploads" 	: {
+				"otfimg"	: "Upload Logo"
+			},
+			
+			"API_dir"	:{
+				"direct"	:	"http://api.google.com/"
+			}
+		}
+}
+

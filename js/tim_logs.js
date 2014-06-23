@@ -9,11 +9,13 @@ $(document).ready( function(){
 		this.start_time_new	= "";
 		this.end_time_new	= "";
 		this.log_id 		= null;
+
 	}
 
 	initialize.prototype.start = function(){
 		containerDiv_cach = this.containerDiv;
 		usersElement_cach = containerDiv_cach.find("select");
+		
 
 		var getData = $.ajax({
 		     type: "POST",
@@ -47,6 +49,28 @@ $(document).ready( function(){
 
 	initialize.prototype.set_end = function(end_time){
 		this.end_time = end_time;
+	};
+
+	initialize.prototype.set_manual_time = function(sa_uid, sa_time_from, sa_time_to, sa_date){
+		var new_time = {
+			"sa_uid" : sa_uid,
+			"sa_time_from" : sa_time_from,
+			"sa_time_to" : sa_time_to,
+			"sa_date" : sa_date
+		}
+		$.post("getDataLogs.php",
+			{Action: "set_manual_time", new_time : new_time},
+			function (res){
+				if(res.trim() =="ok"){
+					console.log ("all_good");
+					location.reload();
+
+				}
+				else{
+					alert ("something went wrong!");
+					console.log (res);
+				}
+			});
 	};
 
 	initialize.prototype.getLogs = function(){
@@ -247,8 +271,8 @@ $(document).ready( function(){
 								totalH.secIncM = '0' + totalH.secIncM;
 						}
 
-						containerDiv_cach.find('#logs_info').append('<div style="padding: 3px; margin-top: 10px; direction: rtl; float: right; background-color: rgb(218, 218, 218); border: 1px solid rgb(189, 189, 189); border-radius: 7;"><u><b>סה"כ שעות עבודה רגילות</u></b> ------ ' + totalH.regularM + ' : ' + totalH.regularH + '<br/><u><b>שעות עבודה נוספות ראשונות</u></b> -- ' + totalH.firstIncM + ' : ' + totalH.firstIncH + '<br/><u><b>שעות עבודה נוספות שניות</u></b> ----- ' + totalH.secIncM + ' : ' + totalH.secIncH + '</div>');
-
+						containerDiv_cach.find('#logs_info').append('<div id="total_hours" style="padding: 3px; margin-top: 10px; direction: rtl; float: right; background-color: rgb(218, 218, 218); border: 1px solid rgb(189, 189, 189); border-radius: 7;"><u><b>סה"כ שעות עבודה רגילות</u></b> ------ ' + totalH.regularM + ' : ' + totalH.regularH + '<br/><u><b>שעות עבודה נוספות ראשונות</u></b> -- ' + totalH.firstIncM + ' : ' + totalH.firstIncH + '<br/><u><b>שעות עבודה נוספות שניות</u></b> ----- ' + totalH.secIncM + ' : ' + totalH.secIncH + '</div>');
+						$('#logs_info').fadeIn('slow');
 					},
 					'json'
 			);
@@ -358,7 +382,12 @@ $(document).ready( function(){
 
 	$( ".datepicker" ).hide(); 
 
-	$( "#from, #to" ).datepicker({
+	$('#self_add_container').hide();
+	$('#self_add').on('click', function(){
+		 $('#self_add_container').fadeToggle(400);
+	});
+
+	$( "#from, #to, #sa_date" ).datepicker({
 	  showOn: "button",
       buttonImage: "images/calendar.gif",
       buttonImageOnly: true,
@@ -370,6 +399,9 @@ $(document).ready( function(){
       },
       dateFormat: 'yy-mm-dd'
     });
+
+	$('.time-picker').timepicker();
+
 
 	$("#users_selection").on('change', function(){
 		var user_id = $("#users_selection option:selected").attr("user_id");
@@ -386,6 +418,27 @@ $(document).ready( function(){
 	$("#to").on('change', function(){
 		init.set_end( $(this).val() );
 		init.getLogs();		
+	});
+
+	$("#sa_users_selection").on('change', function(){
+		var sa_user_id = $("#users_selection option:selected").attr("user_id");
+		$( "#sa_datepicker" ).fadeIn(300);
+		
+
+		//init.set_user(user_id);
+		//init.getLogs();
+
+	});
+
+	$(document).on("click", ".btn-self-add", function(){
+		var sa_time_from = $('#sa_time_from').val(),
+			sa_time_to = $('#sa_time_to').val(),
+			sa_date = $('#sa_date').val(),
+			sa_uid = $('#sa_users_selection option:selected').attr('user_id');
+
+			if (sa_time_from && sa_time_to && sa_date){
+				init.set_manual_time(sa_uid, sa_time_from, sa_time_to, sa_date);
+			}
 	});
 
 	$("#refresh").on('click', function(){

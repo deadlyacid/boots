@@ -1,0 +1,83 @@
+<html>
+<body>
+	<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title></title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap theme -->
+    <link href="../css/bootstrap-theme.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="../css/bootstrap-theme.css" rel="stylesheet">
+<div class="container">
+	
+    <div class="panel panel-default"></div>
+</div>
+    
+	
+</div>
+<script src="../js/jquery-1.11.0.js"></script>
+<script type="text/javascript">
+
+	
+
+	$.getJSON( "temps.json", function( data ) {
+
+  		var items = [];
+  		//get it from user click
+  		var choosen_template = "try_template";
+  		var myTemplateData = [];
+
+  		$.each( data, function( key, val ) {
+    		//items.push( "<li id='" + key + "'>" + val + "</li>" );
+    		
+    		if (key === choosen_template);
+    			myTemplateData.push (val);
+  		});
+		
+
+		// build form
+		$.each( myTemplateData[0], function( elements, e_val ) {
+			switch(elements){
+				case  "input_text" : 
+					$.each(e_val, function(element_name, element_val){
+						$("<input>",{
+							type: "text",
+							class: "large mt-form-tip mt-form-enter",
+							"data-validator" : "required",
+							name : element_name,
+							placeholder : element_val
+						}).appendTo(".panel");
+						$(".panel").append("<br>");
+
+					});
+					break;
+				case "uploads" : 
+					$.each(e_val, function(element_name, element_val){
+						$("<span>"+element_val+"</span>").appendTo(".panel");
+
+						$("<input>",{
+							type: "file",
+							class: "large mt-form-tip mt-form-enter",
+							"data-name" : "otfimg",
+							name : "files[]",
+						}).appendTo(".panel");
+						$(".panel").append("<br>");
+					});
+				break;
+			}
+		});
+  	});
+
+
+
+
+</script>
+</body>
+</html>
